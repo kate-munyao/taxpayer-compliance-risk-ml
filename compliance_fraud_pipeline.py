@@ -4,11 +4,13 @@ from sklearn.ensemble import IsolationForest, RandomForestClassifier
 import sqlite3
 import matplotlib.pyplot as plt
 import logging
+def main():
+
 
 # -----------------------------
 # LOGGING SETUP
 # -----------------------------
-logging.basicConfig(
+ logging.basicConfig(
     filename='compliance_pipeline.log',
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
@@ -60,7 +62,10 @@ df['last_filing_date'] = pd.to_datetime('2024-01-01') + pd.to_timedelta(
     np.random.randint(0, 365, N_TAXPAYERS), unit='D'
 )
 df['days_since_filing'] = (pd.Timestamp.now() - df['last_filing_date']).dt.days
-df['overdue_flag'] = (df['days_since_filing'] > 120).astype(int)
+df['overdue_flag'] = (
+    (df['days_since_filing'] > 120) &
+    (np.random.rand(len(df)) > 0.3)
+).astype(int)
 
 df["sector_risk"] = df["sector"].map(sector_risk_map)
 df["revenue_volatility"] = df["payment_std"] / (df["avg_payment"] + 1)
@@ -226,3 +231,6 @@ print("="*60)
 
 logging.info("Pipeline execution complete")
 logging.info("=" * 50)
+
+if __name__ == "__main__":
+    main()

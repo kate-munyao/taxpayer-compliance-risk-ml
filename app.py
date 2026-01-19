@@ -4,6 +4,10 @@ import sqlite3
 import plotly.express as px
 import plotly.graph_objects as go
 
+import os
+from compliance_fraud_pipeline import main as generate_data
+
+
 # -----------------------------
 # CONFIG
 # -----------------------------
@@ -14,6 +18,12 @@ st.set_page_config(
 )
 
 DB_NAME = "taxpayer_compliance.db"
+
+
+if not os.path.exists(DB_NAME):
+    st.warning("⚠️ Database not found. Generating synthetic data...")
+    generate_data()
+
 
 # -----------------------------
 # LOAD DATA
@@ -393,7 +403,10 @@ high_risk_df = filtered_df.nlargest(10, 'risk_score')[[
 # Style the dataframe
 def highlight_anomalies(row):
     if row['anomaly_flag'] == 1:
-        return ['background-color: #FFE5E5'] * len(row)
+      return [
+    'background-color: #FFCDD2; color: black; font-weight: bold'
+] * len(row)
+
     return [''] * len(row)
 
 styled_high_risk = high_risk_df.style.apply(highlight_anomalies, axis=1).format({
