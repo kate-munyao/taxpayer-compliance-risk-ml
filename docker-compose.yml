@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  streamlit-app:
+    build: .
+    container_name: taxpayer-compliance-dashboard
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./taxpayer_compliance.db:/app/taxpayer_compliance.db
+      - ./synthetic_taxpayer_compliance_data.xlsx:/app/synthetic_taxpayer_compliance_data.xlsx
+      - ./feature_importance.png:/app/feature_importance.png
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+    restart: unless-stopped
